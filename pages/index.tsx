@@ -14,20 +14,14 @@ export default function Home() {
       <Head>
         <title>Next Chat</title>
       </Head>
-      <div className="flex min-h-screen w-full items-center justify-center bg-gray-800 text-center text-white">
+      <div className="flex min-h-screen w-full items-center justify-center bg-neutral-800 text-center text-white">
         <div>
           {!user ? (
             <>
-              <Link
-                href={"/api/auth/login"}
-                className="btn"
-              >
+              <Link href={"/api/auth/login"} className="btn">
                 Login
               </Link>
-              <Link
-                href={"/api/auth/signup"}
-                className="btn"
-              >
+              <Link href={"/api/auth/signup"} className="btn">
                 Sign Up
               </Link>
             </>
