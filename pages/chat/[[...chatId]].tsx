@@ -12,9 +12,12 @@ export default function ChatPage() {
   const [newChatMessages, setNewChatMessages] = useState<TChatMessage[] | []>(
     []
   );
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+
     setNewChatMessages((prev) => {
       const newChatMessages: TChatMessage[] = [
         ...prev,
@@ -47,6 +50,8 @@ export default function ChatPage() {
       console.log(message);
       setIncomingMessage((state) => `${state}${message.content}`);
     });
+
+    setIsLoading(false);
   };
 
   return (
@@ -54,10 +59,11 @@ export default function ChatPage() {
       <Head>
         <title>New Chat</title>
       </Head>
-      <div className="grid h-screen grid-cols-[260px_1fr]  text-white">
-        <ChatSidebar></ChatSidebar>
-        <div className="flex flex-col bg-zinc-700">
-          <div className="flex-1 text-white">
+      <div className="grid h-screen  text-white">
+        {/* grid-cols-[260px_1fr]  */}
+        {/* <ChatSidebar></ChatSidebar> */}
+        <div className="flex flex-col overflow-hidden bg-zinc-700">
+          <div className="flex-1 overflow-scroll text-white">
             {newChatMessages.map((message) => {
               return (
                 <Message
@@ -73,11 +79,11 @@ export default function ChatPage() {
           </div>
           <footer className="bg-zinc-800 p-10">
             <form onSubmit={(e) => handleSubmit(e)}>
-              <fieldset className="flex gap-2">
+              <fieldset className="flex gap-2" disabled={isLoading}>
                 <textarea
                   value={messageText}
                   onChange={(e) => setMessageText(e.target.value)}
-                  placeholder="Send a message..."
+                  placeholder={isLoading ? "" : "Send a message..."}
                   className="w-full resize-none rounded-md bg-zinc-700 p-2 text-white focus:border-emerald-500 focus:bg-zinc-600 focus:outline focus:outline-emerald-500"
                 />
                 <button type="submit" className="btn">

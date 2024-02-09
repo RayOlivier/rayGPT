@@ -14,7 +14,7 @@ export default function Home() {
       <Head>
         <title>Next Chat</title>
       </Head>
-      <div className="flex min-h-screen w-full items-center justify-center bg-neutral-800 text-center text-white">
+      <div className="flex min-h-screen w-full items-center justify-center bg-zinc-800 text-center text-white">
         <div>
           {!user ? (
             <>

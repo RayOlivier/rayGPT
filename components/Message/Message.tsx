@@ -3,6 +3,7 @@ import { faRobot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Image from "next/image";
+import ReactMarkdown from "react-markdown";
 
 type TMessageProps = {
   content: string;
@@ -37,7 +38,9 @@ export const Message: React.FC<TMessageProps> = ({
           </div>
         )}
       </div>
-      <div>{content}</div>
+      <div className="prose prose-invert">
+        <ReactMarkdown>{content}</ReactMarkdown>
+      </div>
     </div>
   );
 };
