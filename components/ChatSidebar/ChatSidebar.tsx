@@ -42,7 +42,12 @@ export const ChatSidebar: React.FC<{ chatId: string | null }> = ({
               href={`/chat/${chat._id}`}
             >
               <FontAwesomeIcon icon={faMessage} />
-              {chat.title}
+              <span
+                title={chat.title}
+                className="overflow-hidden text-ellipsis whitespace-nowrap"
+              >
+                {chat.title}
+              </span>
             </Link>
           );
         })}
