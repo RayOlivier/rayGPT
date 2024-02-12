@@ -6,27 +6,46 @@ export const config = {
 
 export default async function handler(req) {
   try {
-    const { message } = await req.json();
+    const { chatId: chatIdFromParam, message } = await req.json();
+    let chatId = chatIdFromParam;
     const systemChatMessage = {
       role: "system",
       content:
         "Your name is RayGPT. You're an impressive AI created by Ray Olivier. Your response must be formatted as markdown.",
     };
 
-    const response = await fetch(
-      `${req.headers.get("origin")}/api/chat/createNewChat`,
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          cookie: req.headers.get("cookie"),
-        },
-        body: JSON.stringify({ message: message }),
-      }
-    );
+    let newChatId;
 
-    const json = await response.json();
-    const chatId = json._id;
+    if (chatId) {
+      // add message to chat
+      const response = await fetch(
+        `${req.headers.get("origin")}/api/chat/addMessageToChat`,
+        {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            cookie: req.headers.get("cookie"),
+          },
+          body: JSON.stringify({ chatId, role: "user", content: message }),
+        }
+      );
+    } else {
+      const response = await fetch(
+        `${req.headers.get("origin")}/api/chat/createNewChat`,
+        {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            cookie: req.headers.get("cookie"),
+          },
+          body: JSON.stringify({ message: message }),
+        }
+      );
+
+      const json = await response.json();
+      chatId = json._id;
+      newChatId = json._id;
+    }
 
     const stream = await OpenAIEdgeStream(
       "https://api.openai.com/v1/chat/completions",
@@ -44,7 +63,9 @@ export default async function handler(req) {
       },
       {
         onBeforeStream: async ({ emit }) => {
-          emit(chatId, "newChatId");
+          if (newChatId) {
+            emit(chatId, "newChatId");
+          }
         },
         onAfterStream: async ({ fullContent }) => {
           // save response to mongodb

@@ -19,12 +19,26 @@ export default function ChatPage({ chatId, title, messages = [] }) {
     []
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [fullAIMessage, setFullAIMessage] = useState<string>("");
+
   const router = useRouter();
 
+  // when our chatId changes, we want to reset the newChatMessages state
   useEffect(() => {
     setNewChatMessages([]);
   }, [chatId]);
 
+  // save the newly streamed message
+  useEffect(() => {
+    if (!isLoading && fullAIMessage) {
+      setNewChatMessages((prev) => [
+        ...prev,
+        { _id: uuid(), role: "assistant", content: fullAIMessage },
+      ]);
+    }
+  }, [isLoading, fullAIMessage]);
+
+  // navigated to newly created chat
   useEffect(() => {
     if (!isLoading && newChatId) {
       setNewChatId(null);
@@ -54,7 +68,7 @@ export default function ChatPage({ chatId, title, messages = [] }) {
       headers: {
         "content-type": "application/json",
       },
-      body: JSON.stringify({ message: messageText }),
+      body: JSON.stringify({ chatId, message: messageText }),
     });
 
     const data = response.body; // edge function
@@ -63,15 +77,18 @@ export default function ChatPage({ chatId, title, messages = [] }) {
     }
 
     const reader = data.getReader();
+    let content = "";
     await streamReader(reader, (message) => {
       console.log(message);
       if (message.event === "newChatId") {
         setNewChatId(message.content);
       } else {
         setIncomingMessage((state) => `${state}${message.content}`);
+        content = content + message.content;
       }
     });
 
+    setFullAIMessage(content);
     setIncomingMessage("");
     setIsLoading(false);
   };
