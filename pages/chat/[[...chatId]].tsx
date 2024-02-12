@@ -6,8 +6,12 @@ import { TChatMessage } from "../../utils/types";
 import { v4 as uuid } from "uuid";
 import { Message } from "../../components/Message";
 import { useRouter } from "next/router";
+import { getSession } from "@auth0/nextjs-auth0";
+import clientPromise from "../../lib/mongodb";
+import { ObjectId } from "mongodb";
 
-export default function ChatPage({ chatId }) {
+export default function ChatPage({ chatId, title, messages = [] }) {
+  console.log("props", title, messages);
   const [newChatId, setNewChatId] = useState<string | null>(null);
   const [incomingMessage, setIncomingMessage] = useState<string>("");
   const [messageText, setMessageText] = useState<string>("");
@@ -16,6 +20,10 @@ export default function ChatPage({ chatId }) {
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setNewChatMessages([]);
+  }, [chatId]);
 
   useEffect(() => {
     if (!isLoading && newChatId) {
@@ -41,10 +49,6 @@ export default function ChatPage({ chatId }) {
     });
     setMessageText("");
 
-    // const json = await response.json(); //serverless function
-
-    // console.log("json", json);
-
     const response = await fetch(`/api/chat/sendMessage`, {
       method: "POST",
       headers: {
@@ -68,8 +72,11 @@ export default function ChatPage({ chatId }) {
       }
     });
 
+    setIncomingMessage("");
     setIsLoading(false);
   };
+
+  const allMessages = [...messages, ...newChatMessages];
 
   return (
     <>
@@ -80,7 +87,7 @@ export default function ChatPage({ chatId }) {
         <ChatSidebar chatId={chatId}></ChatSidebar>
         <div className="flex flex-col overflow-hidden bg-zinc-700">
           <div className="flex-1 overflow-scroll text-white">
-            {newChatMessages.map((message) => {
+            {allMessages.map((message) => {
               return (
                 <Message
                   key={message._id}
@@ -116,9 +123,27 @@ export default function ChatPage({ chatId }) {
 
 export const getServerSideProps = async (context) => {
   const chatId = context.params?.chatId?.[0] || null;
+  if (chatId) {
+    const { user } = await getSession(context.req, context.res);
+    const client = await clientPromise;
+
+    const db = client.db("NextChat");
+    const chat = await db.collection("chats").findOne({
+      _id: new ObjectId(chatId),
+      userId: user.sub,
+    });
+    return {
+      props: {
+        chatId,
+        title: chat.title,
+        messages: chat.messages.map((message) => ({
+          ...message,
+          _id: uuid(),
+        })),
+      },
+    };
+  }
   return {
-    props: {
-      chatId,
-    },
+    props: {},
   };
 };
