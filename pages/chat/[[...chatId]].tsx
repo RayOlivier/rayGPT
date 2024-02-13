@@ -19,25 +19,33 @@ export default function ChatPage({ chatId, title, messages = [] }) {
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [fullAIMessage, setFullAIMessage] = useState<string>("");
+  const [submittedMessageChatId, setSubmittedMessageChatId] =
+    useState<string>(chatId);
 
   const router = useRouter();
 
+  const routeHasChanged = chatId !== submittedMessageChatId;
+
   // when our chatId changes, we want to reset the newChatMessages state
   useEffect(() => {
+    console.log("route changed");
+    console.log("newChatMessages", newChatMessages);
+    console.log("incomingMessage", incomingMessage);
     setNewChatMessages([]);
+    setIncomingMessage("");
   }, [chatId]);
 
   // save the newly streamed message
   useEffect(() => {
-    if (!isLoading && fullAIMessage) {
+    if (!routeHasChanged && !isLoading && fullAIMessage) {
       setNewChatMessages((prev) => [
         ...prev,
         { _id: uuid(), role: "assistant", content: fullAIMessage },
       ]);
     }
-  }, [isLoading, fullAIMessage]);
+  }, [isLoading, fullAIMessage, routeHasChanged]);
 
-  // navigated to newly created chat
+  // navigate to newly created chat
   useEffect(() => {
     if (!isLoading && newChatId) {
       setNewChatId(null);
@@ -47,7 +55,9 @@ export default function ChatPage({ chatId, title, messages = [] }) {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
     setIsLoading(true);
+    setSubmittedMessageChatId(chatId);
 
     setNewChatMessages((prev) => {
       const newChatMessages: TChatMessage[] = [
@@ -78,7 +88,6 @@ export default function ChatPage({ chatId, title, messages = [] }) {
     const reader = data.getReader();
     let content = "";
     await streamReader(reader, (message) => {
-      // console.log(message);
       if (message.event === "newChatId") {
         setNewChatId(message.content);
       } else {
@@ -102,19 +111,31 @@ export default function ChatPage({ chatId, title, messages = [] }) {
       <div className="grid h-screen grid-cols-[260px_1fr]  text-white">
         <ChatSidebar chatId={chatId}></ChatSidebar>
         <div className="flex flex-col overflow-hidden bg-zinc-700">
-          <div className="flex-1 overflow-scroll text-white">
-            {allMessages.map((message) => {
-              return (
-                <Message
-                  key={message._id}
-                  role={message.role}
-                  content={message.content}
-                />
-              );
-            })}
-            {incomingMessage && (
-              <Message role={"assistant"} content={incomingMessage} />
-            )}
+          <div className="flex flex-1 flex-col-reverse overflow-scroll text-white">
+            <div className="mb-auto">
+              {allMessages.map((message) => {
+                return (
+                  <Message
+                    key={message._id}
+                    role={message.role}
+                    content={message.content}
+                  />
+                );
+              })}
+              {!!incomingMessage && !routeHasChanged && (
+                <>
+                  <Message role={"assistant"} content={incomingMessage} />
+                </>
+              )}
+              {incomingMessage && routeHasChanged && (
+                <>
+                  <Message
+                    role="notice"
+                    content="Please wait for the last response to complete before sending a new one."
+                  />
+                </>
+              )}
+            </div>
           </div>
           <footer className="bg-zinc-800 p-10">
             <form onSubmit={(e) => handleSubmit(e)}>
