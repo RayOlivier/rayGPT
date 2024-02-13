@@ -7,7 +7,7 @@ import ReactMarkdown from "react-markdown";
 
 type TMessageProps = {
   content: string;
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "notice";
 };
 
 export const Message: React.FC<TMessageProps> = ({
@@ -19,7 +19,11 @@ export const Message: React.FC<TMessageProps> = ({
   return (
     <div
       className={`grid grid-cols-[30px_1fr] gap-5 p-5 ${
-        role === "assistant" ? "bg-zinc-600" : ""
+        role === "assistant"
+          ? "bg-zinc-600"
+          : role === "notice"
+          ? "bg-red-900"
+          : ""
       }`}
       {...rest}
     >
