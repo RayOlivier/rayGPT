@@ -15,7 +15,7 @@ export default async function handler(req) {
     };
 
     let newChatId;
-    let chatHistoryMessages = [];
+    let chatMessages = [];
 
     if (chatId) {
       // add message to chat
@@ -32,7 +32,7 @@ export default async function handler(req) {
       );
 
       const json = await response.json();
-      chatHistoryMessages = json.chat.messages || [];
+      chatMessages = json.chat.messages || [];
     } else {
       const response = await fetch(
         `${req.headers.get("origin")}/api/chat/createNewChat`,
@@ -49,13 +49,14 @@ export default async function handler(req) {
       const json = await response.json();
       chatId = json._id;
       newChatId = json._id;
+      chatMessages = json.messages || [];
     }
 
     // only send 2000 tokens of chat history to OpenAI
     const messagesToInclude = [];
-    chatHistoryMessages.reverse();
+    chatMessages.reverse();
     let usedTokens = 0;
-    for (let chatMessage of chatHistoryMessages) {
+    for (let chatMessage of chatMessages) {
       const messageTokens = chatMessage.content.length / 4;
       usedTokens += messageTokens;
       if (usedTokens <= 2000) {
