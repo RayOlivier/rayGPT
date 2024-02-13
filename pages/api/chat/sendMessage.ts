@@ -4,9 +4,18 @@ export const config = {
   runtime: "edge",
 };
 
-export default async function handler(req) {
+export default async function handler(req): Promise<Response> {
   try {
     const { chatId: chatIdFromParam, message } = await req.json();
+
+    //validate message data
+    if (!message || message.length > 20) {
+      return new Response(
+        "Message is required and must be less than 2000 characters.",
+        { status: 422 }
+      );
+    }
+
     let chatId = chatIdFromParam;
     const systemChatMessage = {
       role: "system",
@@ -111,6 +120,6 @@ export default async function handler(req) {
 
     return new Response(stream);
   } catch (err) {
-    console.log("sendMessage error: ", err);
+    return new Response("An error occurred.", { status: 500 });
   }
 }
