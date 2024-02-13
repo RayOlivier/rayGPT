@@ -16,7 +16,6 @@ export const ChatSidebar: React.FC<{ chatId: string | null }> = ({
     const loadChatList = async () => {
       const response = await fetch("/api/chat/getChatList", { method: "POST" });
       const json = await response.json();
-      console.log("json", json);
       setChatList(json?.chats || []);
     };
     loadChatList();
