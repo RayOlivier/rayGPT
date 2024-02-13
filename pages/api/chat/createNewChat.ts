@@ -5,6 +5,16 @@ export default async function handler(req, res) {
   try {
     const { user } = await getSession(req, res);
     const { message } = req.body;
+
+    //validate message data
+    if (!message || message.length > 2000) {
+      return res
+        .status(422)
+        .json({
+          message: "Message is required and must be less than 2000 characters.",
+        });
+    }
+
     const newUserMessage = {
       role: "user",
       content: message,

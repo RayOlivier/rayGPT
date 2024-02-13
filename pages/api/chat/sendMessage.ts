@@ -9,7 +9,7 @@ export default async function handler(req): Promise<Response> {
     const { chatId: chatIdFromParam, message } = await req.json();
 
     //validate message data
-    if (!message || message.length > 20) {
+    if (!message || message.length > 2000) {
       return new Response(
         "Message is required and must be less than 2000 characters.",
         { status: 422 }
