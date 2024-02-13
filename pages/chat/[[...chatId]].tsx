@@ -119,7 +119,7 @@ export default function ChatPage({ chatId, title, messages = [] }) {
                     className="text-6xl text-emerald-200"
                   />
                   <h1 className="mt-2 text-4xl font-bold text-white/50">
-                    Ask me a question!
+                    Ask RayGPT a question!
                   </h1>
                 </div>
               </div>
