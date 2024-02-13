@@ -15,6 +15,7 @@ export default async function handler(req) {
     };
 
     let newChatId;
+    let chatHistoryMessages = [];
 
     if (chatId) {
       // add message to chat
@@ -29,6 +30,9 @@ export default async function handler(req) {
           body: JSON.stringify({ chatId, role: "user", content: message }),
         }
       );
+
+      const json = await response.json();
+      chatHistoryMessages = json.chat.messages || [];
     } else {
       const response = await fetch(
         `${req.headers.get("origin")}/api/chat/createNewChat`,
@@ -47,6 +51,22 @@ export default async function handler(req) {
       newChatId = json._id;
     }
 
+    // only send 2000 tokens of chat history to OpenAI
+    const messagesToInclude = [];
+    chatHistoryMessages.reverse();
+    let usedTokens = 0;
+    for (let chatMessage of chatHistoryMessages) {
+      const messageTokens = chatMessage.content.length / 4;
+      usedTokens += messageTokens;
+      if (usedTokens <= 2000) {
+        messagesToInclude.push(chatMessage);
+      } else {
+        break;
+      }
+    }
+
+    messagesToInclude.reverse();
+
     const stream = await OpenAIEdgeStream(
       "https://api.openai.com/v1/chat/completions",
       {
@@ -57,7 +77,7 @@ export default async function handler(req) {
         method: "POST",
         body: JSON.stringify({
           model: "gpt-3.5-turbo",
-          messages: [systemChatMessage, { content: message, role: "user" }],
+          messages: [systemChatMessage, ...messagesToInclude],
           stream: true,
         }),
       },
@@ -68,8 +88,7 @@ export default async function handler(req) {
           }
         },
         onAfterStream: async ({ fullContent }) => {
-          // save response to mongodb
-
+          // save API response to mongodb
           await fetch(
             `${req.headers.get("origin")}/api/chat/addMessageToChat`,
             {
