@@ -30,9 +30,6 @@ export default function ChatPage({ chatId, title, messages = [] }) {
 
   // when our chatId changes, we want to reset the newChatMessages state
   useEffect(() => {
-    console.log("route changed");
-    console.log("newChatMessages", newChatMessages);
-    console.log("incomingMessage", incomingMessage);
     setNewChatMessages([]);
     setIncomingMessage("");
   }, [chatId]);
@@ -178,6 +175,17 @@ export default function ChatPage({ chatId, title, messages = [] }) {
 export const getServerSideProps = async (context) => {
   const chatId = context.params?.chatId?.[0] || null;
   if (chatId) {
+    let objectId;
+
+    try {
+      objectId = new ObjectId(chatId);
+    } catch (e) {
+      // redirect if chatId is not a valid ObjectId
+      return {
+        redirect: { destination: "/chat" },
+      };
+    }
+
     const { user } = await getSession(context.req, context.res);
     const client = await clientPromise;
 
@@ -186,6 +194,15 @@ export const getServerSideProps = async (context) => {
       _id: new ObjectId(chatId),
       userId: user.sub,
     });
+
+    if (!chat) {
+      // redirect if chat does not exist
+      return {
+        redirect: {
+          destination: "/chat",
+        },
+      };
+    }
     return {
       props: {
         chatId,
