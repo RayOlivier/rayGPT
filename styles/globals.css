@@ -8,6 +8,10 @@
         @apply rounded-md bg-emerald-500 px-4 py-2 text-white hover:bg-emerald-600 disabled:bg-gray-300
     }
 
+    .link {
+        @apply  text-emerald-400 underline hover:text-emerald-300 disabled:bg-gray-300
+    }
+
     .side-menu-item {
         @apply flex items-center m-2 p-2 gap-4 rounded-md hover:bg-gray-800
     }

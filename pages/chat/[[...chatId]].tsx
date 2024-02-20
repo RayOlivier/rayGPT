@@ -11,6 +11,7 @@ import clientPromise from "../../lib/mongodb";
 import { ObjectId } from "mongodb";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRobot } from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
 
 export default function ChatPage({ chatId, title, messages = [] }) {
   const [newChatId, setNewChatId] = useState<string | null>(null);
@@ -31,7 +32,8 @@ export default function ChatPage({ chatId, title, messages = [] }) {
   // when our chatId changes, we want to reset the newChatMessages state
   useEffect(() => {
     setNewChatMessages([]);
-    setIncomingMessage("");
+    // setIncomingMessage("");
+    setNewChatId(null);
   }, [chatId]);
 
   // save the newly streamed message
@@ -42,6 +44,7 @@ export default function ChatPage({ chatId, title, messages = [] }) {
         { _id: uuid(), role: "assistant", content: fullAIMessage },
       ]);
     }
+    setFullAIMessage("");
   }, [isLoading, fullAIMessage, routeHasChanged]);
 
   // navigate to newly created chat
@@ -118,15 +121,20 @@ export default function ChatPage({ chatId, title, messages = [] }) {
                     icon={faRobot}
                     className="text-6xl text-emerald-200"
                   />
-                  <h1 className="mt-2 text-4xl font-bold text-white/50">
+                  <h1 className="mt-2 text-4xl font-bold text-emerald-200/75">
                     Ask RayGPT a question!
                   </h1>
+                  <p>Hint: Try the following questions.</p>
+                  <ul>
+                    <li>{`"What is your name?"`}</li>
+                    <li>{`"What was used to build this site?"`}</li>
+                  </ul>
                 </div>
               </div>
             )}
             {!!allMessages.length && (
               <div className="mb-auto">
-                {allMessages.map((message) => {
+                {[...messages, ...newChatMessages].map((message) => {
                   return (
                     <Message
                       key={message._id}
@@ -151,7 +159,7 @@ export default function ChatPage({ chatId, title, messages = [] }) {
               </div>
             )}
           </div>
-          <footer className="bg-zinc-800 p-10">
+          <footer className="bg-zinc-800 px-10 py-6">
             <form onSubmit={(e) => handleSubmit(e)}>
               <fieldset className="flex gap-2" disabled={isLoading}>
                 <textarea
@@ -165,6 +173,13 @@ export default function ChatPage({ chatId, title, messages = [] }) {
                 </button>
               </fieldset>
             </form>
+            <p className="px-2 pt-1 text-sm opacity-70">
+              {`AI isn't foolproof. Consider fact checking important information and reading our `}{" "}
+              <Link href={"/about"} className="link">
+                about page
+              </Link>
+              .
+            </p>
           </footer>
         </div>
       </div>

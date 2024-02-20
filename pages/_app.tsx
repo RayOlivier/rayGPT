@@ -17,7 +17,7 @@ function App({ Component, pageProps }) {
       <Head>
         <link rel="icon" href="/favicon.png" />
       </Head>
-      <main className={`${outfit.variable} font-body`}>
+      <main className={`${outfit.variable} bg-zinc-900 font-body text-white`}>
         <Component {...pageProps} />
       </main>
     </UserProvider>
