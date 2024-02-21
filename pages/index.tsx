@@ -4,7 +4,7 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import { getSession } from "@auth0/nextjs-auth0";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRobot } from "@fortawesome/free-solid-svg-icons";
-import bg from "../assets/greenBG.jpg";
+import bg from "../public/greenBG.jpg";
 import Image from "next/image";
 
 export default function Home() {
@@ -29,6 +29,8 @@ export default function Home() {
           src={bg}
           alt=""
           fill
+          priority
+          placeholder="blur"
           className="z-0 object-cover object-center opacity-40"
         />
         <div className="z-10">
