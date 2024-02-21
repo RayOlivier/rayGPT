@@ -2,17 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer components {
-    .btn {
-        @apply rounded-md bg-emerald-500 px-4 py-2 text-white hover:bg-emerald-600 disabled:bg-gray-300
-    }
+  .btn {
+    @apply rounded-md bg-emerald-500 px-4 py-2 text-white hover:bg-emerald-600 disabled:bg-gray-300;
+  }
 
-    .link {
-        @apply  text-emerald-400 underline hover:text-emerald-300 disabled:bg-gray-300
-    }
+  .link {
+    @apply text-emerald-400 underline hover:text-emerald-300 disabled:bg-gray-300;
+  }
 
-    .side-menu-item {
-        @apply flex items-center m-2 p-2 gap-4 rounded-md hover:bg-gray-800
-    }
+  .side-menu-item {
+    @apply m-2 flex items-center gap-4 rounded-md px-2 py-4 hover:bg-gray-800 sm:p-2;
+  }
 }

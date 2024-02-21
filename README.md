@@ -1,3 +1,14 @@
+# RayGPT
+
+At it's core, this is a portfolio piece meant to show my knowledge of Next.js, React, TypeScript, MongoDB, and Tailwind CSS. 
+
+It's basically a customized chatGPT clone, using the OpenAI API.
+
+Note on routing: I chose to use the page router to familiarize myself with it. Most of my projects use the app router as it's the current best practice for Next 13+.
+
+
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

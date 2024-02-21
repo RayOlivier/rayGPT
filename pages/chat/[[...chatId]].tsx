@@ -21,6 +21,7 @@ export default function ChatPage({ chatId, title, messages = [] }) {
     []
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [fullAIMessage, setFullAIMessage] = useState<string>("");
   const [submittedMessageChatId, setSubmittedMessageChatId] =
     useState<string>(chatId);
@@ -110,8 +111,9 @@ export default function ChatPage({ chatId, title, messages = [] }) {
       <Head>
         <title>New Chat</title>
       </Head>
-      <div className="grid h-screen grid-cols-[260px_1fr]  text-white">
+      <div className="grid h-[calc(100vh-48px)] grid-cols-[64px_1fr] text-white  sm:grid-cols-[260px_1fr]">
         <ChatSidebar chatId={chatId}></ChatSidebar>
+
         <div className="flex flex-col overflow-hidden bg-zinc-700">
           <div className="flex flex-1 flex-col-reverse overflow-scroll text-white">
             {!allMessages.length && !incomingMessage && (
@@ -121,13 +123,13 @@ export default function ChatPage({ chatId, title, messages = [] }) {
                     icon={faRobot}
                     className="text-6xl text-emerald-200"
                   />
-                  <h1 className="mt-2 text-4xl font-bold text-emerald-200/75">
+                  <h1 className="my-2 text-4xl font-bold text-emerald-200/75">
                     Ask RayGPT a question!
                   </h1>
                   <p>Hint: Try the following questions.</p>
                   <ul>
-                    <li>{`"What is your name?"`}</li>
-                    <li>{`"What was used to build this site?"`}</li>
+                    <li>{`What is your name?`}</li>
+                    <li>{`What was used to build this site?`}</li>
                   </ul>
                 </div>
               </div>
