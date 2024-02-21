@@ -16,7 +16,7 @@ export default function Home() {
       <Head>
         <title>Next Chat</title>
       </Head>
-      <div className="flex min-h-screen w-full items-center justify-center bg-zinc-800 text-center text-white">
+      <div className="flex min-h-[calc(100vh-48px)] w-full items-center justify-center bg-zinc-800 text-center text-white">
         <div>
           <div>
             <FontAwesomeIcon
