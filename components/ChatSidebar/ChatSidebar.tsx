@@ -107,7 +107,7 @@ export const ChatSidebar: React.FC<{
         })}
       </div>
       <div
-        className={`absolute left-16 top-0 z-10 h-screen w-screen${
+        className={`absolute left-16 top-0 z-10 h-[calc(100vh-48px)] w-[calc(100vw-64px)] ${
           !mobileSlideOutOpen ? "hidden" : ""
         }`}
         onClick={() => setMobileSlideOutOpen(false)}
