@@ -104,6 +104,13 @@ export default function ChatPage({ chatId, title, messages = [] }) {
     setIsLoading(false);
   };
 
+  const handleKeyDown = (e) => {
+    if (e.keyCode == 13 && e.shiftKey == false) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
+
   const allMessages = [...messages, ...newChatMessages];
 
   return (
@@ -161,11 +168,12 @@ export default function ChatPage({ chatId, title, messages = [] }) {
               </div>
             )}
           </div>
-          <footer className="bg-zinc-800 px-10 py-6">
+          <footer className="bg-zinc-800 p-4 lg:px-10 lg:py-6">
             <form onSubmit={(e) => handleSubmit(e)}>
               <fieldset className="flex gap-2" disabled={isLoading}>
                 <textarea
                   value={messageText}
+                  onKeyDown={handleKeyDown}
                   onChange={(e) => setMessageText(e.target.value)}
                   placeholder={isLoading ? "" : "Send a message..."}
                   className="w-full resize-none rounded-md bg-zinc-700 p-2 text-white focus:border-emerald-500 focus:bg-zinc-600 focus:outline focus:outline-emerald-500"
