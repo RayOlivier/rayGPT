@@ -13,6 +13,14 @@ export default function Home() {
   if (isLoading)
     return (
       <div className="flex min-h-[calc(100vh-48px)] w-full flex-col items-center justify-center bg-zinc-800 text-center text-white">
+        <Image
+          src={bg}
+          alt=""
+          fill
+          priority
+          placeholder="blur"
+          className="z-0 object-cover object-center opacity-40"
+        />
         <div className="h-20 w-20 animate-spin rounded-full border-8 border-zinc-600 border-t-emerald-400" />
         <span className="mt-4 text-lg">Loading...</span>
       </div>
