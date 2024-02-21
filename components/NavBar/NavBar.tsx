@@ -6,7 +6,7 @@ import React from "react";
 const NavBar = ({ toggle }: { toggle: () => void }) => {
   return (
     <>
-      <div className="sticky top-0 h-12 w-full bg-zinc-900 text-white">
+      <div className="sticky top-0 z-30 h-12 w-full bg-zinc-900 text-white">
         <div className="container mx-auto h-full px-4">
           <div className="flex h-full items-center justify-between">
             <Link href="/">
